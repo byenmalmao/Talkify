@@ -66,6 +66,11 @@ userSchema.pre("save", async function (next) {
     
 })
 
+//Comparar contrasenas, la ingresada y la que esta en la base de datos.
+userSchema.methods.matchPAssword = async function (enteredPassword){
+    const isPasswordCorrect = await bcrypt.compare(enteredPassword, this.password);
+    return isPAsswordCorrect    
+}
 const User = mongoose.model("User",userSchema);
 
 

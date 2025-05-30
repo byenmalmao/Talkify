@@ -60,9 +60,40 @@ export  async function signup (req, res){
 }
 
 export async function login (req, res){
-  res.send("Loguearse")    
+  try{
+
+    const { email, password} = req.body;
+    if(!email || !password){
+      return res.status(400).json({message: "TOdos los campos son requeridos"});
+    }
+
+    const user = await User.findOne({email});
+    if(!user) return res.status(401).json({message: "Email o PAssword no validos."});
+
+    const isPasswordCorrect = await user.matchPAssword(password); //esta en modelos
+    if(!isPasswordCorrect) return res.status(401).json({message: "Email or Password no validos"});
+
+    //JWT
+    const token = jwt.sign({userId:newUser._id}, process.env.JWT_SECRET_KEY, {
+      expiresIn: "7d"
+    })
+
+    res.cookie("jwt", token, {
+      maxAge: 7*24 *60*1000,
+      httpOnly: true, //prevent XSS attacts
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production"
+    })
+
+    res.status(200).json({success:true, user});
+  }catch(error){
+
+    console.log("Error in login controller ", eror.message);
+    res.status(500).json({message: "Internal Server Error"})
+  }  
 }
 
 export async function logout (req, res){
-  res.send("Desloguear")    
+  res.clearCookie("jwt");
+  res.status(200).json({success: true, message:"LogOut successful"});
 }
