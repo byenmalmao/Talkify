@@ -74,7 +74,7 @@ export async function login (req, res){
     if(!isPasswordCorrect) return res.status(401).json({message: "Email or Password no validos"});
 
     //JWT
-    const token = jwt.sign({userId:newUser._id}, process.env.JWT_SECRET_KEY, {
+    const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET_KEY, {
       expiresIn: "7d"
     })
 
@@ -88,7 +88,7 @@ export async function login (req, res){
     res.status(200).json({success:true, user});
   }catch(error){
 
-    console.log("Error in login controller ", eror.message);
+    console.log("Error in login controller ", error.message);
     res.status(500).json({message: "Internal Server Error"})
   }  
 }
