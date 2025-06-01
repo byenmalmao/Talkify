@@ -1,7 +1,9 @@
 import User from "../Models/User.js";
+import {upsertStreamUser} from "../lib/stream.js";
 import jwt from "jsonwebtoken";
 
 export  async function signup (req, res){
+
   const {email,password,fullName} = req.body; 
 
   try{
@@ -35,10 +37,20 @@ export  async function signup (req, res){
       password,
       profilePic: randomavatar,
 
-
     })
 
     //TODO STREAM: CREATE USER IN STREAM
+
+   try{
+     await upsertStreamUser({
+      id:newUser._id.toString(),
+      name: newUser.fullName,
+      image: newUser.profilePic || "",
+    });
+    console.log("New User Create: {newUser.fullName}");
+   }catch(error){
+    console.error("Error adding new user in steam. ", error);
+   }
 
     //JWT
     const token = jwt.sign({userId:newUser._id}, process.env.JWT_SECRET_KEY, {
@@ -96,4 +108,49 @@ export async function login (req, res){
 export async function logout (req, res){
   res.clearCookie("jwt");
   res.status(200).json({success: true, message:"LogOut successful"});
+}
+
+export async function onboard (req, res){
+  try {
+   const userId = req.user._id;
+
+   const  {fullName, bio , nativelanguage, learninglanguage, location} = req.body;
+
+   if (!fullName || !bio  || !nativelanguage || !learninglanguage || !location){
+    return res.status(400).json({message: "All fields are required",
+      missingFields: [
+        !fullName && "fullName",
+        !bio && "bio",
+        !nativelanguage && "nativelanguage",
+        !learninglanguage && "learninglanguage",
+        !location && "location",
+      ].filter(Boolean),
+    })
+   }
+    const updatedUser =  await User.findByIdAndUpdate(userId,{
+        ...req.body,
+        isOnboarded: true,
+      }, {new:true})
+
+      if(!updatedUser) return res.status(404).json({message:"User not found"})
+
+    //TODO: HUPDATE THE USER INFO IN STREAM
+
+    try {
+      await upsertStreamUser({
+      id:updatedUser._id,
+      name:updatedUser.fullName,
+      image: updatedUser.profilePic || "",
+    })
+    console.log("Strema user updated after onboarding  for " + updatedUser.fullName);
+    } catch (streamError) {
+      console.log("Error updating Stream user during onboarding", streamError.message);
+    }
+
+        res.status(200).json({success: true, user: updatedUser});
+  } catch (error) {
+    console.error("Onboarding error:", error);
+    res.status(500).json({message: "Internal Server Error"});
+    
+  }
 }
