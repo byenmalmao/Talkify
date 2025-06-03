@@ -1,5 +1,5 @@
 import FriendRequest from "../Models/FriendRequest.js";
-import User from "../Models/User.js"
+import User from "../Models/User.js";
 
 export async function getRecommendedUser(req, res) {
 try {
@@ -53,7 +53,7 @@ export async function sendFriendRequest(req, res){
         }
 
         //Check if user is already friend
-        if(recipient.friends.icludes(myId)){
+        if(recipient.friends.includes(myId)){
             return res.status(400).json({message: "You are already friends with this user"});
         }
 
@@ -109,5 +109,36 @@ export async function acceptFriendRequest(req, res){
         res.status(200).json({message: "Friend request aceepted"});
     } catch (error) {
         console.log("Error in acceptFriendRequest ", error.message);
+    }
+}
+
+export async function getFriendRequests(req, res){
+    try {
+        const incomingsReqs= await FriendRequest.find({
+            recipient: req.user.id,
+            status: "pending",
+        }).populate("sender", "fullName profilePic nativelanguage learninglanguage");
+
+        const acceptedReqs= await FriendRequest.find({
+            recipient: req.user.id,
+            status: "accepted",
+        }).populate("recipient", "fullName profilePic");
+
+        res.status(200).json({incomingsReqs, acceptedReqs})
+    } catch (error) {
+        console.error("Error using the getFriendRequest", error.message);
+        res.status(500).json({ message: "Internal Server Error"});
+    }
+}
+
+export async function getOutgoingFriendReq(req, res){
+    try {
+        const getOutgoingFriendReq = await FriendRequest.find({
+            recipient: req.user.id,
+            status: "pending",
+        }).populate("recipient", "fullName profilePic nativelanguage learninglanguage");
+    } catch (error) {
+        console.error("Error using the getOutgoingFriendReq", error.message);
+        res.status(500).json({ message: "Internal Server Error"});
     }
 }
