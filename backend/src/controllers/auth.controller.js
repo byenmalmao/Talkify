@@ -11,7 +11,7 @@ export  async function signup (req, res){
       return res.status(400).json({message: "Todos los campos son requeridos"});
     }
     if(password.length < 6){
-      return res.status(400).json({message: "Contrasena con mas de  6 digitos requerida"});
+      return res.status(400).json({message: "Contrasena con mas de  6 digitos requerida!"});
     }
 
     const emailRegex = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
