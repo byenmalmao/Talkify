@@ -4,46 +4,48 @@ import bcrypt from "bcryptjs";
 const userSchema = new mongoose.Schema({
     fullName:{
         type: String,
-        required: true
+        required: true,
     },
     email:{
         type:String,
         unique: true,
-        require: true
+        require: true,
     },
     password:{
         type:String,
         required: true,
-        minlength: 6
+        minlength: 6,
     },
     bio:{
         type:String,
-        default: ""
+        default: "",
     },
     profilePic:{
         type:String,
-        default: ""
+        default: "",
     },
     nativelanguage:{
         type: String,
-        default: ""
+        default: "",
     },
     learninglanguage:{
         type: String,
-        default: ""
+        default: "",
     },
     location:{
         type:String,
-        default: ""
+        default: "",
     },
     isOnboarded:{
         type:Boolean,
-        default: false
+        default: false,
     },
-    friends:{
+    friends:[
+        {
         type: mongoose.Schema.Types.ObjectId,
         ref:"User",
-    }
+       },
+    ],
 
 
 },{timestamps:true});
@@ -64,13 +66,13 @@ userSchema.pre("save", async function (next) {
         next(error);
     }
     
-})
+});
 
 //Comparar contrasenas, la ingresada y la que esta en la base de datos.
 userSchema.methods.matchPAssword = async function (enteredPassword){
     const isPasswordCorrect = await bcrypt.compare(enteredPassword, this.password);
-    return isPasswordCorrect    
-}
+    return isPasswordCorrect;    
+};
 const User = mongoose.model("User",userSchema);
 
 
