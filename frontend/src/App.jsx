@@ -27,8 +27,9 @@ const App = () => {
  
   return (
 
-    <div className="text-5xl h-screen" data-theme="night">
+    <div className=" h-screen" data-theme="night">
       <Toaster />
+      
 
       <Routes>
         <Route path="/" element={isAuthenticated && isOnboarded? 
@@ -37,7 +38,7 @@ const App = () => {
           } />
         <Route path="/signup" element={!isAuthenticated ? <SignUpPage />: <Navigate to="/" />} />
         <Route path="/login" element={!isAuthenticated ? <LoginPage />: <Navigate to="/" />} />
-        <Route path="/onboarding" element={isAuthenticated ? <OnboardingPage />: <Navigate to="/login" />} />
+        <Route path="/onboarding" element={isAuthenticated ? ( !isOnboarded ? ( <OnboardingPage />) : ( <Navigate to='/' /> )) : (<Navigate to='/login' />) } />
         <Route path="/notification" element={isAuthenticated  ? <NotificationsPage />: <Navigate to="/login"/>} />
         <Route path="/chat" element={isAuthenticated ? <ChatPage />: <Navigate to="/login"/>} />
         <Route path="/call" element={isAuthenticated ? <CallPage />: <Navigate to="/login"/>} />
