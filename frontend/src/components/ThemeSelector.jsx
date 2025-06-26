@@ -31,7 +31,7 @@ const ThemeSelector = () => {
               <div className="ml-auto flex gap-1">
                 {themeOption.colors.map((color, i) => (
                   <span
-                    key={1}
+                    key={i}
                     className="size-2 rounded-full"
                     style={{ backgroundColor: color }}
                   />

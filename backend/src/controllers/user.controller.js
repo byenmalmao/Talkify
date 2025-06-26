@@ -9,8 +9,8 @@ try {
     const recommendedUsers = await User.find({
         $and: [
             {_id: {$ne: currentUserId}}, //Exclude parameter from the query
-            {$id: {$nin: currentUser.friends}},
-            {$id: {$nin: currentUser.blocked}},//Also we can discard the native language
+            {_id: {$nin: currentUser.friends}},
+            ////{_id: {$nin: currentUser.blocked}},//Also we can discard the native language
             {isOnboarded: true}
         ]
     })
@@ -27,7 +27,7 @@ export async function getFriendsUser(req, res){
 
     try {
         const user = await User.findById(req.user.id).select("friends").populate(
-            "fulName", "nativelanguage", "learninglanguage"
+            "friends", "fullName profilePic nativelanguage learninglanguage"
         ) //The poluplate function brings all the data asked from de DB in Object
 
         res.status(200).json(user.friends);
@@ -132,13 +132,15 @@ export async function getFriendRequests(req, res){
 }
 
 export async function getOutgoingFriendReq(req, res){
-    try {
-        const getOutgoingFriendReq = await FriendRequest.find({
-            recipient: req.user.id,
+     try {
+        const outgoingRequests = await FriendRequest.find({
+            sender: req.user.id,
             status: "pending",
         }).populate("recipient", "fullName profilePic nativelanguage learninglanguage");
+
+        res.status(200).json(outgoingRequests);
     } catch (error) {
         console.error("Error using the getOutgoingFriendReq", error.message);
-        res.status(500).json({ message: "Internal Server Error"});
+        res.status(500).json({ message: "Internal Server Error" });
     }
 }
