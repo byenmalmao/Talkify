@@ -5,9 +5,24 @@ import { THEMES } from "../constants";
 const ThemeSelector = () => {
   const { theme, setTheme } = useThemeStore();
 
+  const setChatChannelBg = (themeName) => {
+    const themeObj = THEMES.find((t) => t.name === themeName);
+    if (themeObj) {
+      // Puedes personalizar el gradiente aquí si lo deseas
+      document.documentElement.style.setProperty(
+        "--chat-channel-bg",
+        `linear-gradient(to bottom, ${themeObj.colors[0]}, ${themeObj.colors[1]})`
+      );
+    }
+  };
+
   return (
     <div className="dropdown dropdown-end">
-      <button tabIndex={0} className="btn btn-ghost btn-circle" aria-label="Seleccionar tema">
+      <button
+        tabIndex={0}
+        className="btn btn-ghost btn-circle"
+        aria-label="Seleccionar tema"
+      >
         <PaletteIcon className="size-5" />
       </button>
 
@@ -24,7 +39,10 @@ const ThemeSelector = () => {
                   ? "bg-primary/10 text-primary"
                   : "hover:bg-base-content/5"
               }`}
-              onClick={() => setTheme(themeOption.name)}
+              onClick={() => {
+                setTheme(themeOption.name);
+                setChatChannelBg(themeOption.name);
+              }}
             >
               <PaletteIcon className="size-4" />
               <span className="text-sm font-medium">{themeOption.label}</span>

@@ -28,7 +28,7 @@ export async function getFriendsUser(req, res){
     try {
         const user = await User.findById(req.user.id).select("friends").populate(
             "friends", "fullName profilePic nativelanguage learninglanguage"
-        ) //The poluplate function brings all the data asked from de DB in Object
+        ); //The poluplate function brings all the data asked from de DB in Object
 
         res.status(200).json(user.friends);
     } catch (error) {
@@ -100,10 +100,10 @@ export async function acceptFriendRequest(req, res){
         //Add each user to their friend list
         //$addToSet: adds elements to an array only if they do not exist
         await User.findByIdAndUpdate(friendRequest.sender, {
-            $addToSet: {friend: friendRequest.recipient},
+            $addToSet: {friends: friendRequest.recipient},
         });
         await User.findByIdAndUpdate(friendRequest.recipient, {
-            $addToSet: {friend: friendRequest.sender},
+            $addToSet: {friends: friendRequest.sender},
         });
 
         res.status(200).json({message: "Friend request aceepted"});
