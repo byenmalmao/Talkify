@@ -1,5 +1,16 @@
 {
   "dependencies": {
     "react-router": "^7.6.2"
-  }
+  },
+  "name": "talkify",
+  "version": "1.0.0",
+  "description": "Talkify es una red social donde se puede intercambiar mensajes y ayuda para la comunicacion entre dos diferentes culturas.",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "start": "npm run start --prefix backend"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
