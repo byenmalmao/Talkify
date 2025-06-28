@@ -4,7 +4,7 @@ import { use } from "react";
 import { ShipWheelIcon, BellIcon, LogOutIcon } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { logout } from "../lib/api.js";
-import ThemeSelector from "./themeSelector.jsx";
+import ThemeSelector from "./ThemeSelector.jsx";
 import useLogout from "../hooks/useLogout.js";
 
 const Navbar = () => {
